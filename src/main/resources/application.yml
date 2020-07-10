@@ -1,0 +1,9 @@
+# 微信通知TOKEN
+APP_TOKEN: AT_sAwyp9Yus1w5TAoQIm2Yy1evNzjKDcQU
+
+# 获取session地址
+SESSION_URL: https://raw.githubusercontent.com/xiaoyang688/session/master/session.txt
+
+# 获取图片地址
+IMAGE_URL: https://api.ancda.com/actions/getList?classIds=112612&start=0&isOnlyTeacher=0&count=30
+

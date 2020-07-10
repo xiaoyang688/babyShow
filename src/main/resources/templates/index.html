@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="./css/normalize.css">
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body>
+<span name="gotop"></span>
+<div id="main" class="ShaShiDi">
+</div>
+<div class="loading" id="loader">
+    <img src="./img/loading.gif"/>
+</div>
+<a href="#gotop">
+    <img src="./img/top.png" id="gotop" alt="" style="position: fixed; right: 10px; bottom: 10px;display: none;">
+    <img src="./img/refresh.png" id="refresh" alt=""
+         style="width: 50px; height: 50px; position: fixed; right: 7px; bottom: 10px;display: none;">
+</a>
+<script src="./js/pulltoload.js"></script>
+<script src="./js/jquery-3.1.1.min.js"></script>
+<script>
+    $(function () {
+        $(function () {
+            $(window).scroll(function () {
+                if ($(window).scrollTop() > 100) {
+                    $("#gotop").fadeIn(300);//一秒渐入动画
+                    $("#refresh").fadeOut(300);//一秒渐隐动画
+                } else {
+                    $("#gotop").fadeOut(300);//一秒渐隐动画
+                    $("#refresh").fadeIn(300);//一秒渐隐动画
+                }
+            });
+            $("#gotop").click(function () {
+                $('body,html').animate({scrollTop: 0}, 3000);
+            });
+            $("#refresh").click(function () {
+                window.location.reload();
+            });
+        });
+    });
+</script>
+<script>
+    var start = 0;
+    var end = 5;
+    var pull = new PullToLoad("body")
+
+    function isContains(str, substr) {
+        return str.indexOf(substr) >= 0;
+    }
+
+    $(document).ready(function () {
+        var opt = {"start": start, "end": end};
+        $.ajax({
+            type: "post",
+            url: "/api/image",
+            dataType: "json",
+            contentType: "application/json",      //网上很多介绍加上此参数的，后来我发现不加入这个参数才会请求成功。
+            data: JSON.stringify(opt),
+            success: function (d) {
+                for (var i = 0; i < 5; i++) {
+                    let isJpg = isContains(d[i], "jpg");
+                    let isMp4 = isContains(d[i], "mp4");
+                    if (isJpg) {
+                        var img = document.createElement("img");
+                        img.src = d[i];
+                        main.appendChild(img);
+                    }
+                    if (isMp4) {
+                        var video = document.createElement("video");
+                        video.src = d[i];
+                        video.controls = "controls";
+                        main.appendChild(video);
+                    }
+                }
+            }
+        });
+    });
+
+    pull.on("load", function (reset) {
+        setTimeout(function () {
+            var opt = {"start": start, "end": end};
+            $.ajax({
+                type: "post",
+                url: "/api/image",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(opt),
+                success: function (d) {
+                    for (var i = 0; i < 5; i++) {
+                        let isJpg = isContains(d[i], "jpg");
+                        let isMp4 = isContains(d[i], "mp4");
+                        if (isJpg) {
+                            var img = document.createElement("img");
+                            img.src = d[i];
+                            main.appendChild(img);
+                        }
+                        if (isMp4) {
+                            var video = document.createElement("video");
+                            video.src = d[i];
+                            video.controls = "controls";
+                            main.appendChild(video);
+                        }
+                    }
+                }
+            });
+            start = start + 5;
+            end = end + 5;
+            // 注意，当加载结束后，调用 reset 函数，以重置 loading
+            reset()
+        }, 1000)
+    })
+</script>
+
+</body>
+</html>

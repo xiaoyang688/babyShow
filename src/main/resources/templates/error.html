@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        function myfun() {
+            if (confirm("系统正在获取图片，请稍后访问！")) {
+                window.open("about:blank", "_self").close();
+            } else {
+                window.open("about:blank", "_self").close();
+            }
+        }
+
+        /*用window.onload调用myfun()*/
+
+        // 不要括号
+        window.onload = myfun;
+    </script>
+</head>
+<body>
+
+</body>
+
+</html>
