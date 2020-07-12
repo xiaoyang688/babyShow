@@ -19,12 +19,11 @@ public class IndexController {
     private ImgService imgService;
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index() {
         List<String> imageList = imgService.getImage();
         if (imageList.size() == 0) {
             return "error";
         }
-        model.addAttribute("imageList", imageList);
         return "index";
     }
 

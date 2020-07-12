@@ -11,10 +11,10 @@
 
 <body>
 <span name="gotop"></span>
-<div id="main" class="ShaShiDi">
+<div id="main">
 </div>
-<div class="loading" id="loader">
-    <img src="./img/loading.gif"/>
+<div id="loader" class="loading">
+    <img src="./img/loading2.gif">
 </div>
 <a href="#gotop">
     <img src="./img/top.png" id="gotop" alt="" style="position: fixed; right: 10px; bottom: 10px;display: none;">
@@ -23,11 +23,12 @@
 </a>
 <script src="./js/pulltoload.js"></script>
 <script src="./js/jquery-3.1.1.min.js"></script>
+<script src="./js/layer.js"></script>
 <script>
     $(function () {
         $(function () {
             $(window).scroll(function () {
-                if ($(window).scrollTop() > 100) {
+                if ($(window).scrollTop() > 20000) {
                     $("#gotop").fadeIn(300);//一秒渐入动画
                     $("#refresh").fadeOut(300);//一秒渐隐动画
                 } else {
@@ -36,7 +37,7 @@
                 }
             });
             $("#gotop").click(function () {
-                $('body,html').animate({scrollTop: 0}, 3000);
+                $('body,html').animate({scrollTop: 0}, 1500);
             });
             $("#refresh").click(function () {
                 window.location.reload();
@@ -69,50 +70,57 @@
                         var img = document.createElement("img");
                         img.src = d[i];
                         main.appendChild(img);
+                        $("#main img").fadeIn(2000);//一秒渐隐动画
                     }
                     if (isMp4) {
                         var video = document.createElement("video");
                         video.src = d[i];
                         video.controls = "controls";
                         main.appendChild(video);
+                        $("#main video").fadeIn(2000);//一秒渐隐动画
                     }
                 }
+                start = start + 5;
+                end = end + 5;
             }
         });
     });
 
     pull.on("load", function (reset) {
-        setTimeout(function () {
-            var opt = {"start": start, "end": end};
-            $.ajax({
-                type: "post",
-                url: "/api/image",
-                dataType: "json",
-                contentType: "application/json",
-                data: JSON.stringify(opt),
-                success: function (d) {
-                    for (var i = 0; i < 5; i++) {
-                        let isJpg = isContains(d[i], "jpg");
-                        let isMp4 = isContains(d[i], "mp4");
-                        if (isJpg) {
-                            var img = document.createElement("img");
-                            img.src = d[i];
-                            main.appendChild(img);
-                        }
-                        if (isMp4) {
-                            var video = document.createElement("video");
-                            video.src = d[i];
-                            video.controls = "controls";
-                            main.appendChild(video);
-                        }
+        var opt = {"start": start, "end": end};
+        $.ajax({
+            type: "post",
+            url: "/api/image",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(opt),
+            success: function (d) {
+                for (var i = 0; i < 5; i++) {
+                    let isJpg = isContains(d[i], "jpg");
+                    let isMp4 = isContains(d[i], "mp4");
+                    if (isJpg) {
+                        var img = document.createElement("img");
+                        img.src = d[i];
+                        main.appendChild(img);
+                        $("#main img").fadeIn(2000);//一秒渐隐动画
+                    }
+                    if (isMp4) {
+                        var video = document.createElement("video");
+                        video.src = d[i];
+                        video.controls = "controls";
+                        main.appendChild(video);
+                        $("#main video").fadeIn(2000);//一秒渐隐动画
                     }
                 }
-            });
-            start = start + 5;
-            end = end + 5;
-            // 注意，当加载结束后，调用 reset 函数，以重置 loading
-            reset()
-        }, 1000)
+            }
+        });
+        start = start + 5;
+        end = end + 5;
+
+        setTimeout(function () {
+            reset();
+        }, 500)
+
     })
 </script>
 

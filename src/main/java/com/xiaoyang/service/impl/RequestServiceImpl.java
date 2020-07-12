@@ -69,7 +69,7 @@ public class RequestServiceImpl implements RequestService {
     public List<String> getImageList() {
 
         List<String> imageList = new ArrayList<>();
-
+        LocalCache.put("session", "0l242g518tlli656ubpmlc0jt3");
         try {
             Request request = new Request.Builder()
                     .url(IMAGE_URL)

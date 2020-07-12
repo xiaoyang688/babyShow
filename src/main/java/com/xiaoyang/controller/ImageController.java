@@ -28,7 +28,6 @@ public class ImageController {
     public List<String> image(@RequestBody QueryPage queryPage) {
         Integer start = queryPage.getStart();
         Integer end = queryPage.getEnd();
-
         if (start > end) {
             return null;
         }
