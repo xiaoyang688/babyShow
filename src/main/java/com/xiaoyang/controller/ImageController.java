@@ -37,7 +37,7 @@ public class ImageController {
             List<String> imageList = imgService.getImage();
             if (imageList.size() != 0) {
                 image = String.join(" ", imageList);
-                LocalCache.put("image", image, 6000);
+                LocalCache.put("image", image, 600);
             }
         }
 

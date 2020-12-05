@@ -1,3 +1,5 @@
+server:
+  port: 8848
 # 微信通知TOKEN
 APP_TOKEN: AT_sAwyp9Yus1w5TAoQIm2Yy1evNzjKDcQU
 

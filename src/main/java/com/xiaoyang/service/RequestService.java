@@ -13,13 +13,13 @@ public interface RequestService {
      *
      * @return
      */
-    String getSessionId();
+    String getSession();
 
     /**
-     * 获取请求
+     * 保存session
      * @return
      */
-    String login();
+    String saveSession(String session);
 
     /**
      * 获取照片

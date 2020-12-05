@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +33,16 @@ public class RequestServiceImpl implements RequestService {
     @Autowired
     private WxPushService wxPushService;
 
+    /**
+     * 罗静老师ID
+     */
+    private String TEACHER_LUO_ID = "131669";
+
+    private String TEACHER_GUO_ID = "131273";
+
     @Override
-    public String getSessionId() {
-        String session = login();
+    public String getSession() {
+        String session = LocalCache.get("session");
         return session;
     }
 
@@ -46,34 +52,20 @@ public class RequestServiceImpl implements RequestService {
      * @return
      */
     @Override
-    public String login() {
-
-        Request request = null;
-        Response response = null;
-        request = new Request.Builder()
-                .url(SESSION_URL)
-                .build();
-
-        try {
-            response = client.newCall(request).execute();
-            String resp = response.body().string();
-            return resp;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    public String saveSession(String session) {
+        LocalCache.put("session", session);
+        return session;
     }
 
     @Override
     public List<String> getImageList() {
 
         List<String> imageList = new ArrayList<>();
-        LocalCache.put("session", "0l242g518tlli656ubpmlc0jt3");
         try {
+            String session = LocalCache.get("session");
             Request request = new Request.Builder()
                     .url(IMAGE_URL)
-                    .addHeader("session", LocalCache.get("session"))
+                    .addHeader("session", session)
                     .addHeader("User-Agent", "Android/ONEPLUS A5010,4.5.6")
                     .build();
             Response response = client.newCall(request).execute();
@@ -82,23 +74,25 @@ public class RequestServiceImpl implements RequestService {
             JSONArray actions = jsonObject.getJSONObject("data").getJSONArray("actions");
             for (Object action : actions) {
                 JSONObject act = (JSONObject) action;
-                JSONArray images = act.getJSONArray("images");
-                for (Object image : images) {
-                    JSONObject img = (JSONObject) image;
-                    String bigImageUrl = img.getString("bigImageUrl");
-                    imageList.add(bigImageUrl);
-                }
-                JSONArray videos = act.getJSONArray("videos");
-                for (Object video : videos) {
-                    JSONObject vid = (JSONObject) video;
-                    String videoUrl = vid.getString("videoUrl");
-                    imageList.add(videoUrl);
+                String publishTeacherId = act.getString("publishTeacherId");
+                // 过滤TEACHER_ID
+                if (TEACHER_LUO_ID.equals(publishTeacherId) || TEACHER_GUO_ID.equals(publishTeacherId)) {
+                    JSONArray images = act.getJSONArray("images");
+                    for (Object image : images) {
+                        JSONObject img = (JSONObject) image;
+                        String bigImageUrl = img.getString("bigImageUrl");
+                        imageList.add(bigImageUrl);
+                    }
+                    JSONArray videos = act.getJSONArray("videos");
+                    for (Object video : videos) {
+                        JSONObject vid = (JSONObject) video;
+                        String videoUrl = vid.getString("videoUrl");
+                        imageList.add(videoUrl);
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            String sessionId = getSessionId();
-            LocalCache.put("session", sessionId.trim());
             wxPushService.wxPush("session失效，快去重新抓取", "UID_iAB4BFMt7quFBtA4eFOeQl117fbZ");
         }
 
